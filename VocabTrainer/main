@@ -1,0 +1,263 @@
+#include <iostream>
+#include <vector>
+#include <fstream>
+#include <random>
+#include <string>
+#include <chrono>
+using namespace std;
+///This getIndex function is used to calculate the index value of a vector that has been implemented in the main part of this program.
+///@param vector_pass: The vector that will be processed
+///@param data: Holds the element that we need to process in order to find its index
+int getIndex(vector<string> vector_pass, const string& data)
+{
+    int index = 0;
+    ///Using the find function in order to locate the element in the vector
+    auto it = find(vector_pass.begin(), vector_pass.end(), data);
+    // If element was found
+    if (it != vector_pass.end())
+    {
+        // calculating the index value
+        // of K
+        index = it - vector_pass.begin();
+    }
+    return index;
+}
+//----------------------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------------------------------------------//
+int main(int argc, char *argv[]){
+    ///In this program, I have created a simple English to German and German to English vocab trainer
+    ///The program has friendly user interface, where we are allowing the users to experience multiple things
+    ///Note:-You can test the program while using UpperCase letters, it will although convert the uppercase characters to lower case.
+    ///The first part of the program is adding the words on a csv file, (Similar concept used by me in the 3rd assignment)
+    ///Then by accessing the csv file, we push the words in the vector, separately done for the German and English words
+    ///In this assignment, I have also used goto statements, which you see in a lot of places to structure the program in a better way
+
+    vector<string> German_outputs;
+    vector<string> English_outputs;
+    using Clock = std::chrono::high_resolution_clock;
+    //----------------------------------------------------------------------------------------------------------------//
+    fstream German_File;
+    German_File.open("GW.csv", ios::out);
+    if (!German_File) {
+        cout << "File not created!";
+    } else {
+        German_File
+                << "hallo" << "," << "datum" << "," << "auto" << "," << "tisch" << "," << "gehen" << ","
+                << "wissen" << "," << "nehmen" << "," << "sehen" << "," << "kommen" << "," << "denken" << ","
+                << "sehen" << "," << "handy" << endl;
+        German_File.close();
+        //----------------------------------------------------------------------------------------------------------------//
+        std::ifstream German;
+        German.open("GW.csv");
+        ///First by using get-line, we are reading the file, by using a comma (,)
+        /// we are splitting every string in a new line so that we can finally push that string into a vector of string.
+        vector<string> hello;
+        string data;
+        /// Get the input from the input file until EOF
+        while (std::getline(German, data, ',')) {
+            /// Pushing the information from the variable to the vector
+            German_outputs.push_back(data);
+        }
+    }
+    //----------------------------------------------------------------------------------------------------------------//
+    fstream English_File;
+    English_File.open("EW.csv", ios::out);
+    if (!English_File) {
+        cout << "File not created!";
+    } else {
+        English_File
+                << "hello" << "," << "date" << "," << "car" << "," << "table" << "," << "go"
+                << "," << "know" << ","<< "take"<< "," << "see" << "," << "come" << "," << "think"
+                << "," << "look" << ","<< "mobile" << "," << endl;
+    }
+    English_File.close();
+    //----------------------------------------------------------------------------------------------------------------//
+    std::ifstream EF;
+    EF.open("EW.csv");
+    ///First by using get-line, we are reading the file, by using a comma (,)
+    /// we are splitting every string in a new line so that we can finally push that string into a vector of string.
+    string data;
+    /// Get the input from the input file until EOF
+    while (std::getline(EF, data, ',')) {
+        /// Pushing the information from the variable to the vector
+        English_outputs.push_back(data);
+    }
+    //----------------------------------------------------------------------------------------------------------------//
+    //----------------------------------------------------------------------------------------------------------------//
+    //----------------------------------------------------------------------------------------------------------------//
+    int first_opt = 0;
+    int second_opt = 0;
+    int third_opt = 0;
+    int score=0;
+    int practice=0;
+    string German_guess;
+    string English_guess;
+    std::random_device rd; // obtain a random number from hardware
+    std::mt19937 gen(rd()); // seed the generator
+    std::uniform_int_distribution<> random(0, 10); // define the range
+    //----------------------------------------------------------------------------------------------------------------//
+    start:
+    cout << "Welcome to a Simple Vocab Trainer, Created by Muazzam Bin Aqeel, CTS_3" << endl;
+    cout << "The program is not case sensitive, you can even use capital letters"<<endl;
+    cout << "The program also consists of a timer, where the user can see how fast were they able enter the correct answer."<<endl;
+    cout << "Please Enter 1, to start the program, or Enter 2, to end the program:" << endl;
+    cin >> first_opt;
+
+
+    if (first_opt == 1) {
+        cout << "Please enter 1 to start the program: " << endl;
+        cout << "Please enter 2 to begin the training mode: " << endl;
+        cout << "Please enter 3 to exit: " << endl;
+        cin >> second_opt;
+
+        if (second_opt == 1) {
+            Languages:
+            cout<<"--------------------------------------------------------------------"<<endl;
+            cout << "There is a timer in this game to check how fast you answer these questions." << endl;
+            cout<<"--------------------------------------------------------------------"<<endl;
+            cout << "Please enter 1 for GERMAN to ENGLISH: " << endl;
+            cout << "Please enter 2 for ENGLISH to GERMAN: " << endl;
+            cout << "Enter 3 for going back to the main menu" <<endl;
+            cin >> third_opt;
+            ///In this part of the Program we will see that I have used STL based functions in order to solve the assignment.
+            if (third_opt == 1) {
+                cout << "------GERMAN to ENGLISH------" << endl;
+                int fix_ran=random(gen);
+                cout << "Please enter the English version of: '" << German_outputs[fix_ran] << "'" << endl;
+
+
+                //-----------------------------------------------------------------------------------------//
+                auto start = Clock::now();
+                cin >> English_guess;
+                auto end = Clock::now();
+                auto ms = std::chrono::duration_cast<std::chrono::seconds>(end - start).count();
+                std::cout << "Your input took [" << ms << "] seconds" << std::endl;
+                //---------------------------------------------------------------------------------------//
+
+
+
+                ///Over here, we are simply converting the Uppercase alphabets to Lowercase
+                std::for_each(English_guess.begin(),English_guess.end(),[](char & c) {c = ::tolower(c);});
+                /// Using Iterator we are locating if the element that the user has entered even exists in our vector.
+                std::vector<string>::iterator it;
+                it = std::find (English_outputs.begin(), English_outputs.end(), English_guess);
+                /// if it doesn't exist then we guide the user accordingly.
+                if (it != English_outputs.end()){
+                    goto correct_part;
+                }else{
+                    cout<<"Sorry, Unfortunately your data is incorrect"<<endl;
+                    goto Languages;
+                }
+                ///Using a for loop till the point we have fully compared the elements of the string with the user value
+                ///Using the getIndex which is implemented above the main function, we are successfully able to get the index value the desired vector
+                correct_part:
+                for (int i = 0; i < English_outputs.size(); ++i) {
+                    if (English_guess == English_outputs[i]) {
+                        cout << "Your english word exists in the database." << endl;
+                        int temp1=getIndex(English_outputs, English_guess);
+                        int temp2=getIndex(German_outputs, German_outputs[fix_ran]);
+                        if(temp1==temp2){
+                            score=score+1;
+                            cout<<"----Congratulations, You have entered the correct translation---- [Total Points] = "<<score<<endl;
+                            cout<<"--------------------------------------------------------------------"<<endl;
+                            goto Languages;
+                        }
+                    }
+
+                }
+            }
+
+            if (third_opt == 2) {
+                cout << "------ENGLISH to GERMAN------" << endl;
+
+                int fix_ran=random(gen);
+                cout << "Please enter the German version of: '" << English_outputs[fix_ran] << "'" << endl;
+                //-----------------------------------------------------------------------------------------//
+                auto start = Clock::now();
+                cin >> German_guess;
+                auto end = Clock::now();
+                auto ms = std::chrono::duration_cast<std::chrono::seconds>(end - start).count();
+                std::cout << "Your input took [" << ms << "] seconds" << std::endl;
+                //---------------------------------------------------------------------------------------//
+
+                ///Over here, we are simply converting the Uppercase alphabets to Lowercase
+                std::for_each(German_guess.begin(),German_guess.end(),[](char & c) {c = ::tolower(c);});
+                std::vector<string>::iterator it;
+                it = std::find (German_outputs.begin(), German_outputs.end(), German_guess);
+                /// if it doesn't exist then we guide the user accordingly.
+                if (it != German_outputs.end()){
+                    goto correct_part_German;
+                }else{
+                    cout<<"Sorry, Unfortunately your data is incorrect."<<endl;
+                    goto Languages;
+                }
+                ///Using a for loop till the point we have fully compared the elements of the string with the user value
+                ///Using the getIndex which is implemented above the main function, we are successfully able to get the index value the desired vector
+                correct_part_German:
+                for (int i = 0; i < German_outputs.size(); ++i) {
+                    if (German_guess == German_outputs[i]) {
+                        if (German_guess == German_outputs[i]) {
+                            cout << "Your german word exists in the database." << endl;
+                            int temp1=getIndex(German_outputs, German_guess);
+                            int temp2=getIndex(English_outputs, English_outputs[fix_ran]);
+                            if(temp1==temp2){
+                                score=score+1;
+                                cout<<"----Congratulations, You have entered the correct translation---- [Total Points] = "<<score<<endl;
+                                cout<<"--------------------------------------------------------------------"<<endl;
+                                goto Languages;
+                            }
+                        }
+                    }
+                }
+            }if(third_opt==3){
+                goto start;
+            }else{
+                cout<<"Sorry you have enter a wrong value."<<endl;
+                goto start;
+            }
+            ///This is the training part of the program
+            ///Simply by using a traditional for loop we are able to Display all of the words with their translations
+        }if(second_opt==2){
+            cout<<"--------------------------------------------------------------------"<<endl;
+            cout<<"Training Mode: "<<endl;
+            cout<<"--------------------------------------------------------------------"<<endl;
+            cout<<"You will be shown 12 words with their translation"<<endl;
+            ///Simply using a for loop, we are able to print the English words with their translations
+            int i=0;
+            all:
+            for (; i <English_outputs.size()&&i<German_outputs.size();) {
+                cout<<"Enter 1 for a new word with its translation "<<endl;
+                cout<<"Enter 2 for to start your test: "<<endl;
+                cin>>practice;
+                if(practice==1){
+                    cout<<"English Word: "<<English_outputs[i]<< "---German Translation: ";
+                    cout<<" "<<German_outputs[i]<<endl;
+                    cout<<"--------------------------------------------------------------------"<<endl;
+                    ++i;
+                    goto all;
+                }if(practice==2){
+                    goto Languages;
+                }
+                else{
+                    cout<<"Wrong value, please enter the correct one: "<<endl;
+                    goto all;
+                }
+            }
+
+            cout<<"---------------------END OF VOCAB------------------------"<<endl;
+            goto start;
+        }else{
+            goto end;
+        }
+    }if(first_opt==2){
+        end:
+        cout<<"The program has successfully ended, Thank you! ";
+    }
+    else{
+        cout<<"Sorry you have enter a wrong value, Please restart the program."<<endl;
+    }
+    cin.sync();cin.get();
+    return 0;
+}
