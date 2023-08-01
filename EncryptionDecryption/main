@@ -1,0 +1,126 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+/// encrypted method coverts the original text to the encrypted text
+/// @param word:String variable that contains the original text
+/// @param key:String variable that contains the password
+string encrypted(string word, string key) {
+    ///Variable that has the final string value which will be returned
+    string encrypted = "";
+    ///A variable that is used to for the while loop
+    int c=0;
+    /// We will first proceed with a while loop, in order to completely read the whole original text,
+    /// The first condition helps us to check, if the alphabet is a actually a letter or just a space in the text,
+    /// If the sum of key and the word is lesser equal to 187, we then perform certain mathematical operations by analyzing through the ASCII table.
+    while(c < key.size()){
+        if (key[c] != 32) {
+            if (key[c] + word[c] <= 187) {
+                encrypted += key[c] + word[c] - 97;
+            } else {
+                encrypted += key[c] + word[c] - 123;
+            }
+        } else {
+            encrypted += 32;
+        }
+        c++;
+    }
+    return encrypted;
+}
+
+/// Decrypted method converts the encrypted text to the original text
+/// @param word:String variable that contains the encrypted text
+/// @param key:String variable that contains the password
+string decrypted(string word, string key){
+    ///Variable that has the final string value which will be returned
+    string decrypted{};
+    ///A variable that is used to transfer information in between
+    string p=key;
+    ///We first proceed with a while loop, in order to read whole encrypted text,
+    ///Using the if statement we check for the spaces,
+    ///Casting the letters of input variables to an integer value allows us to find the original text,
+    ///In order to get the correct value, we then do some mathematical operations by analyzing through the ASCII table.
+    int i = 0;
+    while(i < key.size()){
+        if((word[i]) != 32){
+            int check = ((static_cast<int>(word[i] - 65)) - (static_cast<int>(key[i]) - 65));
+            if (check < 0) p[i] = check + 26;
+            else p[i]  = check % 26;
+            p[i] += 97;
+        }
+        else{
+            p[i] = 32;
+        }
+        i++;
+    }
+    decrypted = p;
+    return decrypted;
+}
+
+
+///Name:-Muazzam Bin Aqeel, CTS 3,
+///This program has two separate methods for encryption and decryption,
+///In the main program, you will observe a user-friendly environment, where you can separately encode or decode.
+///The following protocols have been followed:-
+///•The original text will consist only of small letters (a-z)
+///•spaces will not be encrypted.
+///•The password will only consist of capital letters (A-Z).
+int main(int argc, char *argv[]){
+    ///Initializing the variables
+    string key;
+    string word;
+    string opt;
+    int l=0;
+    int y=0;
+    int c=0;
+    int d=0;
+    ///Asking the user to enter the text and the key,
+    ///First we check if the length of the text and the key are the same,
+    /// Then we fix the alphabets of word to the Uppercase and the alphabets of key to the Lowercase,
+
+    cout << "Please enter the alphabet 'e' to Encrypt, or enter the alphabet 'd' to Decrypt :  "<<endl;
+    getline(cin, opt);
+    if(opt == "e" || opt == "E" || opt == "d" || opt == "D"){
+        cout << "If you have pressed 'e' then please enter the original text or if you have pressed 'd' then enter the encrypted text: "<<endl;
+        getline(cin, word);
+        cout << "Please enter the key: "<<endl;
+        getline(cin, key);
+    }else{
+        cout<<"You have entered a wrong character, Please restart the program and enter letter (e) or (d).";
+    }
+    if (word.length() == key.length()) {
+        if (opt == "e" || opt=="E") {
+
+            for (int a = 0; a <= word[c]; ++a) {
+                word[c] = tolower(word[c]);
+                c++;
+            }
+            for (int b = 0; b <= key[d]; ++b) {
+                key[d] = toupper(key[d]);
+                d++;
+            }
+            cout << "-----------------"<<endl;
+            cout << "Original Text: "<<word<<endl;
+            cout << "Password: "<<key<<endl;
+            cout << "Encrypted Text: "<<encrypted(word, key)<<endl;
+        }
+        if (opt == "d" || opt=="D") {
+            for (int a = 0; a <= word[l]; ++a) {
+                word[l] = toupper(word[l]);
+                l++;
+            }
+            for (int b = 0; b <= key[y]; ++b) {
+                key[y] = toupper(key[y]);
+                y++;
+            }
+            cout << "---------------------" << endl;
+            cout << "Encrypted Text: " << word << endl;
+            cout << "Password: " << key << endl;
+            cout << "Original Text: " << decrypted(word, key) << endl;
+        }
+    } else {
+        cout << "The length of your text and password does not match." << endl;
+    }
+    cin.sync();cin.get();
+    return 0;
+}
